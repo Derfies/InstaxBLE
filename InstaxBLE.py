@@ -13,14 +13,15 @@ from io import BytesIO
 
 
 class InstaxBLE:
-    def __init__(self,
-                 device_address=None,
-                 device_name=None,
-                 print_enabled=False,
-                 dummy_printer=True,
-                 verbose=False,
-                 quiet=False,
-                 image_path=None):
+    def __init__(
+        self,
+        device_address=None,
+        device_name=None,
+        print_enabled=False,
+        dummy_printer=True,
+        verbose=False,
+        quiet=False,
+    ):
         """
         Initialize the InstaxBLE class.
         deviceAddress: if specified, will only connect to a printer with this address.
@@ -39,7 +40,6 @@ class InstaxBLE:
         self.printEnabled = print_enabled
         self.deviceName = device_name.upper() if device_name else None
         self.deviceAddress = device_address.upper() if device_address else None
-        self.image_path = image_path
         self.verbose = verbose if not self.quiet else False
         self.packetsForPrinting = []
         self.pos = (0, 0, 0, 0)
@@ -481,9 +481,10 @@ class InstaxBLE:
         return bytearray(img_buffer.getvalue())
 
 
-def main(args={}):
+def main(**kwargs):
     """ Example usage of the InstaxBLE class """
-    instax = InstaxBLE(**args)
+    image_path = kwargs.pop('image_path', None)
+    instax = InstaxBLE(**kwargs)
     try:
         # To prevent misprints during development this script sends all the
         # image data except the final 'go print' command. To enable printing
@@ -504,8 +505,9 @@ def main(args={}):
         # send your image (.jpg) to the printer by
         # passing the image_path as an argument when calling
         # this script, or by specifying the path in your code
-        if instax.image_path:
-            instax.print_image(instax.image_path)
+        
+        if image_path is not None:
+            instax.print_image(image_path)
         else:
             instax.print_image(instax.printerSettings['exampleImage'])
 
